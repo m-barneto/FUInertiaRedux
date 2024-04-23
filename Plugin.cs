@@ -2,12 +2,9 @@
 
 using Aki.Reflection.Patching;
 using BepInEx;
-using BepInEx.Configuration;
 using Comfort.Common;
 using EFT;
-using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
