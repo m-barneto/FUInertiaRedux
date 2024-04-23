@@ -34,6 +34,9 @@
     <Reference Include="Aki.Reflection">
       <HintPath>References\Aki.Reflection.dll</HintPath>
     </Reference>
+    <Reference Include="AnimationSystem.Types">
+      <HintPath>References\AnimationSystem.Types.dll</HintPath>
+    </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>References\Assembly-CSharp.dll</HintPath>
     </Reference>

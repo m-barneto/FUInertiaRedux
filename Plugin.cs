@@ -33,6 +33,7 @@ namespace FUInertiaRedux {
             eftHardSettings.CHARACTER_SPEED_CHANGING_SPEED = 100f;
             eftHardSettings.TRANSFORM_ROTATION_LERP_SPEED = 100f;
             eftHardSettings.StartingSprintSpeed = 10f;
+            eftHardSettings.SIDESTEP_TO_MOVE_DURATION = 0f;
         }
 
         void SetDefaultInertiaHardSettings() {
@@ -50,6 +51,7 @@ namespace FUInertiaRedux {
             eftHardSettings.CHARACTER_SPEED_CHANGING_SPEED = 1f;
             eftHardSettings.TRANSFORM_ROTATION_LERP_SPEED = 5f;
             eftHardSettings.StartingSprintSpeed = 0.5f;
+            //SIDESTEP_TO_MOVE_DURATION
         }
 
         public class GetGlobalConfigPatch : ModulePatch {
@@ -74,8 +76,8 @@ namespace FUInertiaRedux {
                 inertiaSettings.BaseJumpPenalty = 0.03f;
                 inertiaSettings.CrouchSpeedAccelerationRange.x = 4.75f;
                 inertiaSettings.CrouchSpeedAccelerationRange.y = 7.5f;
-                inertiaSettings.ExitMovementStateSpeedThreshold.x = 0.001f;
-                inertiaSettings.ExitMovementStateSpeedThreshold.y = 0.001f;
+                inertiaSettings.ExitMovementStateSpeedThreshold.x = 0.05f;
+                inertiaSettings.ExitMovementStateSpeedThreshold.y = 0.05f;
                 inertiaSettings.InertiaLimitsStep = 0.1f;
                 inertiaSettings.MaxTimeWithoutInput.x = 0.01f;
                 inertiaSettings.MaxTimeWithoutInput.y = 0.03f;
@@ -85,9 +87,17 @@ namespace FUInertiaRedux {
                 inertiaSettings.SprintBrakeInertia.y = 0f;
                 inertiaSettings.SprintTransitionMotionPreservation.x = 0.006f;
                 inertiaSettings.SprintTransitionMotionPreservation.y = 0.008f;
-                inertiaSettings.WalkInertia.x = 0.002f;
-                inertiaSettings.WalkInertia.y = 0.025f;
+                inertiaSettings.WalkInertia.x = 0.05f;
+                inertiaSettings.WalkInertia.y = 0.05f;
                 inertiaSettings.SuddenChangesSmoothness = 1f;
+
+                inertiaSettings.SideTime.x = 0f;
+                inertiaSettings.SideTime.y = 0f;
+
+                inertiaSettings.DiagonalTime.x = 0f;
+                inertiaSettings.DiagonalTime.y = 0f;
+
+                //inertiaSettings.InertiaLimits = new Vector3(9000f, 10000f, 1f);
             }
         }
         public class SprintAccelerationPatch : ModulePatch {
@@ -111,7 +121,6 @@ namespace FUInertiaRedux {
                 return result;
             }
         }
-
         public class UpdateWeightLimitsPatch : ModulePatch {
             protected override MethodBase GetTargetMethod() => typeof(GClass681).GetMethod("UpdateWeightLimits");
 
