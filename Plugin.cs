@@ -7,6 +7,7 @@ using Comfort.Common;
 using EFT;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEngine;
 
@@ -20,11 +21,10 @@ namespace FUInertiaRedux {
             new SprintAccelerationPatch().Enable();
             new UpdateWeightLimitsPatch().Enable();
 
-            UpdateHardSettings();
-
+            SetNoInertiaHardSettings();
         }
 
-        void UpdateHardSettings() {
+        void SetNoInertiaHardSettings() {
             EFTHardSettings eftHardSettings = EFTHardSettings.Instance;
 
             eftHardSettings.JUMP_DELAY_BY_SPEED = AnimationCurve.Constant(0f, 1f, 0f);
@@ -36,6 +36,23 @@ namespace FUInertiaRedux {
             eftHardSettings.CHARACTER_SPEED_CHANGING_SPEED = 100f;
             eftHardSettings.TRANSFORM_ROTATION_LERP_SPEED = 100f;
             eftHardSettings.StartingSprintSpeed = 10f;
+        }
+
+        void SetDefaultInertiaHardSettings() {
+            EFTHardSettings eftHardSettings = EFTHardSettings.Instance;
+
+            eftHardSettings.JUMP_DELAY_BY_SPEED = new AnimationCurve(new Keyframe[] {
+                new Keyframe(0.00000f, 0.30000f, Mathf.Infinity, 0.00000f, 0.33333f, 0.33333f),
+                new Keyframe(0.30000f, 0.00000f, Mathf.Infinity, Mathf.Infinity, 0.33333f, 0.33333f),
+                new Keyframe(0.99958f, -0.00007f, 0.00000f, 0.00000f, 0.33333f, 0.33333f) });
+
+            eftHardSettings.IdleStateMotionPreservation = 0.8f;
+            eftHardSettings.DecelerationSpeed = 1.2f;
+            eftHardSettings.DIRECTION_LERP_SPEED = 5f;
+            eftHardSettings.POSE_CHANGING_SPEED = 3f;
+            eftHardSettings.CHARACTER_SPEED_CHANGING_SPEED = 1f;
+            eftHardSettings.TRANSFORM_ROTATION_LERP_SPEED = 5f;
+            eftHardSettings.StartingSprintSpeed = 0.5f;
         }
 
         public class GetGlobalConfigPatch : ModulePatch {
@@ -53,7 +70,7 @@ namespace FUInertiaRedux {
             }
 
             private static void UpdateInertia(BackendConfigClass backendConfig) {
-                Logger.LogInfo("Updating server-side inertia settings...");
+                Logger.LogInfo("Updating server-side inertia settings.");
                 var inertiaSettings = backendConfig.Config.Inertia;
 
                 // Setting the float values
