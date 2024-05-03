@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 namespace FUInertiaRedux {
-    [BepInPlugin("Mattdokn.FUInertiaRedux", "FUInertiaRedux", "1.0.0")]
+    [BepInPlugin("Mattdokn.FUInertiaRedux", "FUInertiaRedux", "1.0.1")]
     public class Plugin : BaseUnityPlugin {
         void Awake() {
             EFTHardSettings.Load();
