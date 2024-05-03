@@ -74,10 +74,10 @@ namespace FUInertiaRedux {
 
                 // Setting the float values
                 inertiaSettings.BaseJumpPenalty = 0.03f;
-                inertiaSettings.CrouchSpeedAccelerationRange.x = 4.75f;
-                inertiaSettings.CrouchSpeedAccelerationRange.y = 7.5f;
-                inertiaSettings.ExitMovementStateSpeedThreshold.x = 0.05f;
-                inertiaSettings.ExitMovementStateSpeedThreshold.y = 0.05f;
+                //inertiaSettings.CrouchSpeedAccelerationRange.x = 4.75f;
+                //inertiaSettings.CrouchSpeedAccelerationRange.y = 7.5f;
+                inertiaSettings.ExitMovementStateSpeedThreshold.x = 0.001f;
+                inertiaSettings.ExitMovementStateSpeedThreshold.y = 0.001f;
                 inertiaSettings.InertiaLimitsStep = 0.1f;
                 inertiaSettings.MaxTimeWithoutInput.x = 0.01f;
                 inertiaSettings.MaxTimeWithoutInput.y = 0.03f;
@@ -87,9 +87,11 @@ namespace FUInertiaRedux {
                 inertiaSettings.SprintBrakeInertia.y = 0f;
                 inertiaSettings.SprintTransitionMotionPreservation.x = 0.006f;
                 inertiaSettings.SprintTransitionMotionPreservation.y = 0.008f;
-                inertiaSettings.WalkInertia.x = 0.05f;
-                inertiaSettings.WalkInertia.y = 0.05f;
+                inertiaSettings.WalkInertia.x = 0.002f;
+                inertiaSettings.WalkInertia.y = 0.0025f;
                 inertiaSettings.SuddenChangesSmoothness = 1f;
+
+                inertiaSettings.InertiaLimitsStep = 0.025f;
 
                 inertiaSettings.SideTime.x = 0f;
                 inertiaSettings.SideTime.y = 0f;
