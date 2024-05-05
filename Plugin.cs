@@ -160,34 +160,5 @@ namespace FUInertiaRedux {
                 }
             }
         }
-        public class SprintAccelerationPatch : ModulePatch {
-            protected override MethodBase GetTargetMethod() => typeof(MovementContext).GetMethod("SprintAcceleration");
-
-            [PatchPrefix]
-            private static bool Prefix(MovementContext __instance, float deltaTime, Player ____player, GClass733 ____averageRotationX) {
-                bool inRaid = Singleton<AbstractGame>.Instance.InRaid;
-                bool flag = ____player.IsYourPlayer && inRaid;
-                bool result;
-                if (flag) {
-                    float num = ____player.Physical.SprintAcceleration * deltaTime;
-                    float num2 = (____player.Physical.SprintSpeed * __instance.SprintingSpeed + 1f) * __instance.StateSprintSpeedLimit;
-                    float num3 = Mathf.Max(EFTHardSettings.Instance.sprintSpeedInertiaCurve.Evaluate(Mathf.Abs((float)____averageRotationX.Average)), EFTHardSettings.Instance.sprintSpeedInertiaCurve.Evaluate(2.1474836E+09f) * 2f);
-                    num2 = Mathf.Clamp(num2 * num3, 0.1f, num2);
-                    __instance.SprintSpeed = Mathf.Clamp(__instance.SprintSpeed + num * Mathf.Sign(num2 - __instance.SprintSpeed), 0.01f, num2);
-                    result = false;
-                } else {
-                    result = true;
-                }
-                return result;
-            }
-        }
-        public class UpdateWeightLimitsPatch : ModulePatch {
-            protected override MethodBase GetTargetMethod() => typeof(GClass681).GetMethod("UpdateWeightLimits");
-
-            [PatchPostfix]
-            private static void Postfix(GClass681 __instance) {
-                __instance.BaseInertiaLimits = Vector3.zero;
-            }
-        }
     }
 }
