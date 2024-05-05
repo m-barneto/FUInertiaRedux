@@ -60,6 +60,12 @@ namespace FUInertiaRedux {
             new GetGlobalConfigPatch().Enable();
 
             ApplyHardSettings();
+
+            Config.SettingChanged += Config_SettingChanged;
+        }
+
+        private void Config_SettingChanged(object sender, SettingChangedEventArgs e) {
+            ApplyHardSettings();
         }
 
         void ApplyHardSettings() {
