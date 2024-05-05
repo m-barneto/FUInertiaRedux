@@ -62,6 +62,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationManagerAttributes.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -69,7 +70,7 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)BepInEx\plugins\
 copy /Y "$(TargetDir)$(TargetFileName)" "$(TargetDir)BepInEx\plugins\$(TargetFileName)"
-copy /Y "$(TargetDir)$(TargetFileName)" "C:\Games\EFT-SPT 3.8.0 - Dev\BepInEx\plugins\$(TargetFileName)"
+copy /Y "$(TargetDir)$(TargetFileName)" "C:\Games\SPT 3.8.1\BepInEx\plugins\$(TargetFileName)"
 powershell.exe -command Compress-Archive -Force -Path BepInEx $(TargetName).zip</PostBuildEvent>
   </PropertyGroup>
 </Project>
