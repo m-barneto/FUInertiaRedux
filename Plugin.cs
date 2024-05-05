@@ -15,7 +15,7 @@ namespace FUInertiaRedux {
 
         ConfigEntry<float> accelerationSpeed;
         ConfigEntry<float> decelerationSpeed;
-        ConfigEntry<float> directionChangeSpeed;
+        ConfigEntry<float> sprintingDirectionChangeSpeed;
         ConfigEntry<float> motionPreservation;
         ConfigEntry<float> poseChangeSpeed;
         ConfigEntry<float> rotationSpeed;
@@ -36,8 +36,8 @@ namespace FUInertiaRedux {
             decelerationSpeed = Config.Bind("Hard Settings", "Deceleration Speed", 10f, 
                 new ConfigDescription("Self explanatory.\nVanilla Value: 1.2", null, 
                 new ConfigurationManagerAttributes { Order = -1 }));
-            directionChangeSpeed = Config.Bind("Hard Settings", "Direction Change Speed", 20f, 
-                new ConfigDescription("How fast you change direction, can cause weird snapping effect if value too high when sprinting and pressing A/D.\nVanilla Value: 5.0", null, 
+            sprintingDirectionChangeSpeed = Config.Bind("Hard Settings", "Sprinting Direction Change Speed", 20f, 
+                new ConfigDescription("How fast you change direction while sprinting, can cause weird snapping effect if value too high and pressing A/D.\nVanilla Value: 5.0", null, 
                 new ConfigurationManagerAttributes { Order = -2 }));
             motionPreservation = Config.Bind("Hard Settings", "Motion Preservation", 0f, 
                 new ConfigDescription("Motion preservation when you let go of all keys.\nVanilla Value: 0.8", null, 
@@ -73,7 +73,7 @@ namespace FUInertiaRedux {
 
             eftHardSettings.CHARACTER_SPEED_CHANGING_SPEED = accelerationSpeed.Value;
             eftHardSettings.DecelerationSpeed = decelerationSpeed.Value;
-            eftHardSettings.DIRECTION_LERP_SPEED = directionChangeSpeed.Value;
+            eftHardSettings.DIRECTION_LERP_SPEED = sprintingDirectionChangeSpeed.Value;
             eftHardSettings.IdleStateMotionPreservation = motionPreservation.Value;
             eftHardSettings.POSE_CHANGING_SPEED = poseChangeSpeed.Value;
             eftHardSettings.TRANSFORM_ROTATION_LERP_SPEED = rotationSpeed.Value;
