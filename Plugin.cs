@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 namespace FUInertiaRedux {
-    [BepInPlugin("Mattdokn.FUInertiaRedux", "FUInertiaRedux", "1.0.1")]
+    [BepInPlugin("Mattdokn.FUInertiaRedux", "FUInertiaRedux", "1.1.0")]
     public class Plugin : BaseUnityPlugin {
 
         ConfigEntry<float> accelerationSpeed;
