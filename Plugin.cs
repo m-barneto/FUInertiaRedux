@@ -1,9 +1,7 @@
-﻿
-
-using Aki.Reflection.Patching;
+﻿using Aki.Reflection.Patching;
 using BepInEx;
 using BepInEx.Configuration;
-using Comfort.Common;
+using HarmonyLib;
 using EFT;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -24,48 +22,67 @@ namespace FUInertiaRedux {
 
         static ConfigEntry<bool> enableServersideInertiaSettings;
 
+        ConfigEntry<bool> disableMousePenalty;
+
+        ModulePatch MousePenaltyPatch;
+
 
 
         void Awake() {
             EFTHardSettings.Load();
 
 
-            accelerationSpeed = Config.Bind("Hard Settings", "Acceleration Speed", 100f, 
-                new ConfigDescription("How fast you approach full speed.\nVanilla Value: 1.0", null, 
+            accelerationSpeed = Config.Bind("Hard Settings", "Acceleration Speed", 100f,
+                new ConfigDescription("How fast you approach full speed.\nVanilla Value: 1.0", null,
                 new ConfigurationManagerAttributes { Order = 0 }));
-            decelerationSpeed = Config.Bind("Hard Settings", "Deceleration Speed", 10f, 
-                new ConfigDescription("Self explanatory.\nVanilla Value: 1.2", null, 
+            decelerationSpeed = Config.Bind("Hard Settings", "Deceleration Speed", 10f,
+                new ConfigDescription("Self explanatory.\nVanilla Value: 1.2", null,
                 new ConfigurationManagerAttributes { Order = -1 }));
-            sprintingDirectionChangeSpeed = Config.Bind("Hard Settings", "Sprinting Direction Change Speed", 20f, 
-                new ConfigDescription("How fast you change direction while sprinting, can cause weird snapping effect if value too high and pressing A/D.\nVanilla Value: 5.0", null, 
+            sprintingDirectionChangeSpeed = Config.Bind("Hard Settings", "Sprinting Direction Change Speed", 20f,
+                new ConfigDescription("How fast you change direction while sprinting, can cause weird snapping effect if value too high and pressing A/D.\nVanilla Value: 5.0", null,
                 new ConfigurationManagerAttributes { Order = -2 }));
-            motionPreservation = Config.Bind("Hard Settings", "Motion Preservation", 0f, 
-                new ConfigDescription("Motion preservation when you let go of all keys.\nVanilla Value: 0.8", null, 
+            motionPreservation = Config.Bind("Hard Settings", "Motion Preservation", 0f,
+                new ConfigDescription("Motion preservation when you let go of all keys.\nVanilla Value: 0.8", null,
                 new ConfigurationManagerAttributes { Order = -3 }));
-            poseChangeSpeed = Config.Bind("Hard Settings", "Pose Change Speed", 5f, 
-                new ConfigDescription("How fast you can change height (crouching->standing).\nVanilla Value: 3.0", null, 
+            poseChangeSpeed = Config.Bind("Hard Settings", "Pose Change Speed", 5f,
+                new ConfigDescription("How fast you can change height (crouching->standing).\nVanilla Value: 3.0", null,
                 new ConfigurationManagerAttributes { Order = -4 }));
-            rotationSpeed = Config.Bind("Hard Settings", "Rotation Speed", 100f, 
-                new ConfigDescription("How snapped the character is to your camera's facing direction.\nVanilla Value: 5.0", null, 
+            rotationSpeed = Config.Bind("Hard Settings", "Rotation Speed", 100f,
+                new ConfigDescription("How snapped the character is to your camera's facing direction.\nVanilla Value: 5.0", null,
                 new ConfigurationManagerAttributes { Order = -5 }));
-            initialSprintSpeed = Config.Bind("Hard Settings", "Starting Sprint Speed", 10f, 
-                new ConfigDescription("Initial sprinting speed.\nVanilla Value: 0.5", null, 
+            initialSprintSpeed = Config.Bind("Hard Settings", "Starting Sprint Speed", 10f,
+                new ConfigDescription("Initial sprinting speed.\nVanilla Value: 0.5", null,
                 new ConfigurationManagerAttributes { Order = -6 }));
-            removeJumpDelay = Config.Bind("Hard Settings", "Remove Jump Delay", true, 
-                new ConfigDescription("Removes the delay between landing and your next jump.", null, 
+            removeJumpDelay = Config.Bind("Hard Settings", "Remove Jump Delay", true,
+                new ConfigDescription("Removes the delay between landing and your next jump.", null,
                 new ConfigurationManagerAttributes { Order = -7 }));
 
             enableServersideInertiaSettings = Config.Bind("Server Settings", "Enabled", true, "Overrides server-side inertia settings. REQUIRES EXITING RAID");
 
+            disableMousePenalty = Config.Bind("Client Settings", "Disable Mouse Penalty", true, "Disables the mouse penalty when sprinting");
+
             new GetGlobalConfigPatch().Enable();
+            MousePenaltyPatch = new MovementStateRotationPatch();
+            if (disableMousePenalty.Value) {
+                MousePenaltyPatch.Enable();
+            }
 
             ApplyHardSettings();
 
             Config.SettingChanged += Config_SettingChanged;
+
+
         }
 
         private void Config_SettingChanged(object sender, SettingChangedEventArgs e) {
             ApplyHardSettings();
+            if (e.ChangedSetting.Definition.Key.Equals("Disable Mouse Penalty")) {
+                if (disableMousePenalty.Value) {
+                    MousePenaltyPatch.Enable();
+                } else {
+                    MousePenaltyPatch.Disable();
+                }
+            }
         }
 
         void ApplyHardSettings() {
@@ -158,6 +175,20 @@ namespace FUInertiaRedux {
 
                     inertiaSettings.InertiaLimitsStep = 0.1f;
                 }
+            }
+        }
+
+        public class MovementStateRotationPatch : ModulePatch {
+            protected override MethodBase GetTargetMethod() => typeof(MovementState).GetMethod("ClampRotation");
+            static FieldInfo movementContextField = AccessTools.Field(typeof(MovementState), "MovementContext");
+
+            static bool Prefix(MovementState __instance, ref Vector3 __result, Vector3 deltaRotation) {
+                if (__instance.RotationSpeedClamp <= 0f) {
+                    __result = Vector3.zero;
+                } else {
+                    __result = ((MovementContext)movementContextField.GetValue(__instance)).ApplyExternalSense(deltaRotation);
+                }
+                return false;
             }
         }
     }
