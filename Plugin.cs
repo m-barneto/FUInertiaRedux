@@ -1,4 +1,4 @@
-﻿using Aki.Reflection.Patching;
+﻿using SPT.Reflection.Patching;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using UnityEngine;
 
 namespace FUInertiaRedux {
-    [BepInPlugin("Mattdokn.FUInertiaRedux", "FUInertiaRedux", "1.1.0")]
+    [BepInPlugin("Mattdokn.FUInertiaRedux", "FUInertiaRedux", "1.2.0")]
     public class Plugin : BaseUnityPlugin {
 
         ConfigEntry<float> accelerationSpeed;
@@ -22,7 +22,7 @@ namespace FUInertiaRedux {
 
         static ConfigEntry<bool> enableServersideInertiaSettings;
 
-        ConfigEntry<bool> disableMousePenalty;
+        //ConfigEntry<bool> disableMousePenalty;
 
         ModulePatch MousePenaltyPatch;
 
@@ -59,13 +59,13 @@ namespace FUInertiaRedux {
 
             enableServersideInertiaSettings = Config.Bind("Server Settings", "Enabled", true, "Overrides server-side inertia settings. REQUIRES EXITING RAID");
 
-            disableMousePenalty = Config.Bind("Client Settings", "Disable Mouse Penalty", true, "Disables the mouse penalty when sprinting");
+            //disableMousePenalty = Config.Bind("Client Settings", "Disable Mouse Penalty", true, "Disables the mouse penalty when sprinting");
 
             new GetGlobalConfigPatch().Enable();
-            MousePenaltyPatch = new MovementStateRotationPatch();
+            /*MousePenaltyPatch = new MovementStateRotationPatch();
             if (disableMousePenalty.Value) {
                 MousePenaltyPatch.Enable();
-            }
+            }*/
 
             ApplyHardSettings();
 
@@ -76,13 +76,13 @@ namespace FUInertiaRedux {
 
         private void Config_SettingChanged(object sender, SettingChangedEventArgs e) {
             ApplyHardSettings();
-            if (e.ChangedSetting.Definition.Key.Equals("Disable Mouse Penalty")) {
+            /*if (e.ChangedSetting.Definition.Key.Equals("Disable Mouse Penalty")) {
                 if (disableMousePenalty.Value) {
                     MousePenaltyPatch.Enable();
                 } else {
                     MousePenaltyPatch.Disable();
                 }
-            }
+            }*/
         }
 
         void ApplyHardSettings() {
@@ -138,7 +138,7 @@ namespace FUInertiaRedux {
         }
 
         public class GetGlobalConfigPatch : ModulePatch {
-            protected override MethodBase GetTargetMethod() => typeof(Class263).GetMethod("GetGlobalConfig");
+            protected override MethodBase GetTargetMethod() => typeof(Class266).GetMethod("GetGlobalConfig").MakeGenericMethod(typeof(BackendConfigClass));
 
             [PatchPostfix]
             static void Postfix(ref Task<BackendConfigClass> __result) {
@@ -182,12 +182,14 @@ namespace FUInertiaRedux {
             protected override MethodBase GetTargetMethod() => typeof(MovementState).GetMethod("ClampRotation");
             static FieldInfo movementContextField = AccessTools.Field(typeof(MovementState), "MovementContext");
 
+            [PatchPrefix]
             static bool Prefix(MovementState __instance, ref Vector3 __result, Vector3 deltaRotation) {
                 if (__instance.RotationSpeedClamp <= 0f) {
                     __result = Vector3.zero;
                 } else {
                     __result = ((MovementContext)movementContextField.GetValue(__instance)).ApplyExternalSense(deltaRotation);
                 }
+                __result = Vector3.zero;
                 return false;
             }
         }
