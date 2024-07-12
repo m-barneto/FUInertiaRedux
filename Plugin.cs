@@ -23,6 +23,7 @@ namespace FUInertiaRedux {
         static ConfigEntry<bool> enableServersideInertiaSettings;
 
         //ConfigEntry<bool> disableMousePenalty;
+        static ConfigEntry<float> inertiaWeightMultiplier;
 
         ModulePatch MousePenaltyPatch;
 
@@ -61,11 +62,15 @@ namespace FUInertiaRedux {
 
             //disableMousePenalty = Config.Bind("Client Settings", "Disable Mouse Penalty", true, "Disables the mouse penalty when sprinting");
 
+            inertiaWeightMultiplier = Config.Bind("Weight Settings", "Inertia Weight Multiplier", 0f,
+                new ConfigDescription("Multiplier for weight based inertia.\nVanilla Value: 1.0"));
+
             new GetGlobalConfigPatch().Enable();
             /*MousePenaltyPatch = new MovementStateRotationPatch();
             if (disableMousePenalty.Value) {
                 MousePenaltyPatch.Enable();
             }*/
+            new PlayerPhysicalClassPatch().Enable();
 
             ApplyHardSettings();
 
@@ -191,6 +196,15 @@ namespace FUInertiaRedux {
                 }
                 __result = Vector3.zero;
                 return false;
+            }
+        }
+
+        public class PlayerPhysicalClassPatch : ModulePatch {
+            protected override MethodBase GetTargetMethod() => typeof(PlayerPhysicalClass).GetMethod("CalculateValue");
+
+            [PatchPrefix]
+            private static void Prefix(PlayerPhysicalClass __instance, ref Vector3 __dependency, ref float __weight) {
+                __weight = __weight * inertiaWeightMultiplier.Value;
             }
         }
     }

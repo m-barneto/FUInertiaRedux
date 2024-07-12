@@ -77,7 +77,7 @@
   <PropertyGroup>
     <PostBuildEvent>mkdir $(TargetDir)BepInEx\plugins\
 copy /Y "$(TargetDir)$(TargetFileName)" "$(TargetDir)BepInEx\plugins\$(TargetFileName)"
-copy /Y "$(TargetDir)$(TargetFileName)" "C:\Games\SPT 3.8.1\BepInEx\plugins\$(TargetFileName)"
+copy /Y "$(TargetDir)$(TargetFileName)" "C:\Games\SPT 3.9.0\BepInEx\plugins\$(TargetFileName)"
 powershell.exe -command Compress-Archive -Force -Path BepInEx $(TargetName).zip</PostBuildEvent>
   </PropertyGroup>
 </Project>
