@@ -203,8 +203,8 @@ namespace FUInertiaRedux {
             protected override MethodBase GetTargetMethod() => typeof(PlayerPhysicalClass).GetMethod("CalculateValue");
 
             [PatchPrefix]
-            private static void Prefix(PlayerPhysicalClass __instance, ref Vector3 __dependency, ref float __weight) {
-                __weight = __weight * inertiaWeightMultiplier.Value;
+            private static void Prefix(PlayerPhysicalClass __instance, ref float weight) {
+                weight = weight * inertiaWeightMultiplier.Value;
             }
         }
     }
