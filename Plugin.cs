@@ -62,7 +62,7 @@ namespace FUInertiaRedux {
 
             //disableMousePenalty = Config.Bind("Client Settings", "Disable Mouse Penalty", true, "Disables the mouse penalty when sprinting");
 
-            inertiaWeightMultiplier = Config.Bind("Weight Settings", "Inertia Weight Multiplier", 0f,
+            inertiaWeightMultiplier = Config.Bind("Weight Settings", "Inertia Weight Multiplier", 0.25f,
                 new ConfigDescription("Multiplier for weight based inertia.\nVanilla Value: 1.0"));
 
             new GetGlobalConfigPatch().Enable();
